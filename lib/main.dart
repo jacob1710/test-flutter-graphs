@@ -84,15 +84,11 @@ class _MyHomePageState extends State<MyHomePage> {
             graphNeedsChangeCount ++;
             secondGraphNeedsChangeCount ++;
           });
-          setState(() {
-
-          });
         },
         icon: Icon(Icons.refresh_rounded),
       ),
       body: Center(
         child: SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
           // height: 300,
           child: Column(
             children: [
@@ -125,6 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                         ),
                       includePoints: true,
+                      stacked: false,
                       // ID used to link series to this renderer.
                         customRendererId: 'customLine'),
                     charts.LineRendererConfig(
@@ -216,7 +213,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
   Widget get2(){
-    double width = 40;
+    double width = 30;
     return Stack(
       children: [
         Container(
@@ -290,13 +287,13 @@ class _MyHomePageState extends State<MyHomePage> {
         Container(
           alignment: Alignment.centerLeft,
           // height: 150,
-          width: ((width+4)*(values.length+1)),
+          width: ((width+6)*(values.length+1)),
           // key: ValueKey(graphNeedsChangeCount),
           // width: 200,
           child: LineChart(
               LineChartData(
                   maxX: values.length.toDouble() - 0.5,
-                  minX: -0.5,
+                  minX: -0.45,
                   minY: 0,
                   maxY: 100,
                   borderData: FlBorderData(show: false),
@@ -448,6 +445,13 @@ List<charts.Series<OrdinalSales, String>> _createSampleData() {
     );
   });
 
+  List<OrdinalSales> dataLine = [];
+  valuesDouble2.forEachIndexed((index, element) {
+    dataLine.add(
+        OrdinalSales(strVals[index], element)
+    );
+  });
+
   return [
     charts.Series<OrdinalSales, String>(
         id: 'Data',
@@ -466,7 +470,7 @@ List<charts.Series<OrdinalSales, String>> _createSampleData() {
         colorFn: (_, __) => charts.MaterialPalette.yellow.shadeDefault,
         domainFn: (OrdinalSales sales, _) => sales.year,
         measureFn: (OrdinalSales sales, _) => sales.sales,
-        data: data)
+        data: dataLine)
     // Configure our custom line renderer for this series.
       ..setAttribute(charts.rendererIdKey, 'customLine'),
     charts.Series<OrdinalSales, String>(
