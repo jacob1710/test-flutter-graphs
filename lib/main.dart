@@ -66,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
         iconSize:50,
         onPressed: () {
           setState(() {
-            itemsInList = 1+Random().nextInt(5);
+            itemsInList = 1+Random().nextInt(6);
             print(itemsInList);
             valuesDouble = List.generate(itemsInList, (index) {
               return Random().nextDouble()*maxVal;
@@ -106,6 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: charts.OrdinalComboChart(
                     _createSampleData(),
                   animate: true,
+                  animationDuration: Duration(milliseconds: 500),
                   behaviors: [
                     charts.LinePointHighlighter(
                       symbolRenderer: charts.CircleSymbolRenderer(
@@ -282,7 +283,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       drawVerticalLine: false
                     // horizontalInterval: 15
                   )
-              )
+              ),
+            swapAnimationDuration: Duration(seconds: 1),
           ),
         ),
         Container(
@@ -335,7 +337,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   gridData: FlGridData(
                     show: false,
                   )
-              )
+              ),
+            swapAnimationDuration: Duration(milliseconds: 500),
           ),
         ),
         Visibility(
