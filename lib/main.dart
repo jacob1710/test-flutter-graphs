@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:math';
 
 import 'package:charts_painter/chart.dart';
@@ -72,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
         iconSize:50,
         onPressed: () {
           setState(() {
-            itemsInList = 1+Random().nextInt(12);
+            itemsInList = 1+Random().nextInt(15);
             print(itemsInList);
             valuesDouble = List.generate(itemsInList, (index) {
               return Random().nextDouble()*maxVal;
@@ -118,10 +117,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 height: 300,
                   child: get2()
               ),
-
-
-
-
+              Padding(
+                padding: const EdgeInsets.only(left: 40.0),
+                child: Text("NFL Games 20/9 - 1/11"),
+              )
               // SizedBox(
               //   height: 300, width: 300,
               //   child: googleChart
@@ -256,20 +255,21 @@ class _MyHomePageState extends State<MyHomePage> {
 
   }
 
+double containerWidth = 350;
+
   Widget get2(){
 
     // bar was 34 * length+1
     // line was 35.2 * length+1
 
 
-    double containerWidth = 350;
     double barTotalWidth = containerWidth - 40;
     // double width = values.length
     double barWidth = ((barTotalWidth) / (values.length)) - 5;
 
     double lineWidth = containerWidth;
 
-    double minY = 10;
+    double minY = 0;
 
 
     return Stack(
@@ -280,6 +280,11 @@ class _MyHomePageState extends State<MyHomePage> {
           // key: ValueKey(secondGraphNeedsChangeCount),
           child: BarChart(
               BarChartData(
+                barTouchData: BarTouchData(
+                  touchTooltipData: BarTouchTooltipData(
+                    tooltipBgColor: kFlashPicksBlue
+                  )
+                ),
                 minY: minY,
                 maxY: 100,
                   groupsSpace: 5,
@@ -318,7 +323,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 style: TextStyle(
                                   color: Colors.white,
                                   background: Paint()..color = kFlashPicksBlue
-                                    ..strokeWidth = 17
+                                    ..strokeWidth = 16
                                     ..style = PaintingStyle.stroke,
                                 )
                             ),
@@ -340,12 +345,6 @@ class _MyHomePageState extends State<MyHomePage> {
                         ]
                     );
                   }).toList(),
-                  // barGroups: values.map((e) => BarChartGroupData(
-                  //     x: values.indexOf(e),
-                  //   barRods: [
-                  //**/
-                  //   ]
-                  // )).toList()
                   gridData: FlGridData(
                       show: true,
                       drawHorizontalLine: true,
@@ -371,6 +370,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   minY: minY,
                   maxY: 100,
                   borderData: FlBorderData(show: false),
+                  lineTouchData: LineTouchData(
+                    touchTooltipData: LineTouchTooltipData(
+                      tooltipBgColor: kFlashPicksBlue
+                    )
+                  ),
                   extraLinesData: ExtraLinesData(
                       extraLinesOnTop: true,
                       horizontalLines: [
@@ -381,7 +385,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 style: TextStyle(
                                   color: Colors.white,
                                   background: Paint()..color = kFlashPicksBlue
-                                    ..strokeWidth = 17
+                                    ..strokeWidth = 16
                                     ..style = PaintingStyle.stroke,
                                 )
                             ),
@@ -412,12 +416,18 @@ class _MyHomePageState extends State<MyHomePage> {
                           )
                       )
                   ),
-                  clipData: FlClipData.all(),
+                  // clipData: FlClipData.all(),
                   lineBarsData: [
                     LineChartBarData(
                         color: Colors.grey,
                         dotData: FlDotData(
-
+                          getDotPainter: (spot, val, bar, index){
+                            return FlDotSquarePainter(
+                              color: Colors.grey,
+                              size: 8,
+                              strokeWidth: 1
+                            );
+                          }
                         ),
                         lineChartStepData: LineChartStepData(stepDirection: 1),
                         spots: List.generate(values2.length, (index){
@@ -432,98 +442,6 @@ class _MyHomePageState extends State<MyHomePage> {
             swapAnimationDuration: Duration(milliseconds: 500),
           ),
         ),
-        Visibility(
-          visible: false,
-          child: Container(
-            width: containerWidth,
-            // key: ValueKey(secondGraphNeedsChangeCount),
-            child: BarChart(
-                BarChartData(
-                    maxY: 100,
-                    groupsSpace: 5,
-                    alignment: BarChartAlignment.start,
-                    titlesData: FlTitlesData(
-                        topTitles: AxisTitles(
-                            sideTitles: SideTitles(showTitles: false)
-                        ),
-                        rightTitles: AxisTitles(
-                            sideTitles: SideTitles(showTitles: false)
-                        ),
-                        leftTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                                showTitles: true,
-                                // interval: ((maxValue-minValue)/3).roundToDouble(),
-                                reservedSize: 40)
-                        ),
-                        bottomTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                                showTitles: true,
-                                reservedSize: 40,
-                                getTitlesWidget: getTitles
-                            )
-                        )
-                    ),
-                    borderData: FlBorderData(
-                        show: false
-                    ),
-                    extraLinesData: ExtraLinesData(
-                        extraLinesOnTop: true,
-                        horizontalLines: [
-                          HorizontalLine(y: values.average, label: HorizontalLineLabel(show: true), color: Colors.yellow)
-                        ]
-                    ),
-                    barGroups: List.generate(values.length, (index){
-                      return BarChartGroupData(
-                          x: index,
-                          barRods: [
-                            BarChartRodData(
-                                fromY: 0,
-                                width: barWidth,
-                                borderRadius: BorderRadius.zero,
-                                toY: values[index].toDouble(),
-                                color: Colors.transparent
-                            )
-                          ]
-                      );
-                    }).toList(),
-                    // barGroups: values.map((e) => BarChartGroupData(
-                    //     x: values.indexOf(e),
-                    //   barRods: [
-                    //**/
-                    //   ]
-                    // )).toList()
-                    gridData: FlGridData(
-                        show: true,
-                        drawHorizontalLine: true,
-                        drawVerticalLine: false
-                      // horizontalInterval: 15
-                    )
-                )
-            ),
-          ),
-        ),
-        // Container(
-        //   height: 300,
-        //   width: 400,
-        //   child: FLC.VerticalBarChart(
-        //       painter: FLC.VerticalBarChartPainter(
-        //           verticalBarChartContainer: FLC.VerticalBarChartTopContainer(
-        //               chartData: FLC.ChartData(
-        //                   dataRows: [valuesDouble],
-        //                   chartOptions: FLC.ChartOptions(
-        //
-        //                   ),
-        //                   dataRowsLegends: ["Teams"],
-        //                   xUserLabels: strVals
-        //               )
-        //           )
-        //       )
-        //   ),
-        // )
-        // charts.NumericComboChart(
-        //
-        //   defaultRenderer: charts.LineRendererConfig(),
-        // )
       ],
     );
   }
@@ -588,187 +506,34 @@ class OrdinalSales {
   OrdinalSales(this.year, this.sales);
 }
 
-
-
-Widget getOverlapped(){
-  double width = 40;
-  return AspectRatio(
-    aspectRatio: 1.80,
-    child: Stack(
-      alignment: Alignment.centerLeft,
-      children: [
-        Column(
-          children: [
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.all(16.0),
-                // height: 150,
-                child: BarChart(
-                    BarChartData(
-                        groupsSpace: 5,
-                        alignment: BarChartAlignment.start,
-                        titlesData: FlTitlesData(
-                            topTitles: AxisTitles(
-                                sideTitles: SideTitles(showTitles: false)
-                            ),
-                            rightTitles: AxisTitles(
-                                sideTitles: SideTitles(showTitles: false)
-                            ),
-                            leftTitles: AxisTitles(
-                                sideTitles: SideTitles(
-                                    showTitles: true,
-                                    // interval: ((maxValue-minValue)/3).roundToDouble(),
-                                    reservedSize: 40)
-                            ),
-                            bottomTitles: AxisTitles(
-                                sideTitles: SideTitles(
-                                    showTitles: true,
-                                    reservedSize: 40,
-                                    getTitlesWidget: getTitles
-                                )
-                            )
-                        ),
-                        borderData: FlBorderData(
-                            show: false
-                        ),
-                        extraLinesData: ExtraLinesData(
-                            extraLinesOnTop: true,
-                            horizontalLines: [
-                              HorizontalLine(y: baseline, label: HorizontalLineLabel(show: true), color: Colors.blue)
-                            ]
-                        ),
-                        barGroups: List.generate(values.length, (index){
-                          return BarChartGroupData(
-                              x: index,
-                              barRods: [
-                                BarChartRodData(
-                                    fromY: 0,
-                                    width: width,
-                                    borderRadius: BorderRadius.zero,
-                                    toY: values[index].toDouble(),
-                                    color: values[index] >= baseline?Colors.green:Colors.red
-                                )
-                              ]
-                          );
-                        }).toList(),
-                        // barGroups: values.map((e) => BarChartGroupData(
-                        //     x: values.indexOf(e),
-                        //   barRods: [
-                        //**/
-                        //   ]
-                        // )).toList()
-                        gridData: FlGridData(
-                            show: true,
-                            drawHorizontalLine: true,
-                            drawVerticalLine: false
-                          // horizontalInterval: 15
-                        )
-                    )
-                ),
-              ),
-            ),
-          ],
-        ),
-        Column(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Container(
-                  alignment: Alignment.centerLeft,
-                  height: 150,
-                  width: ((width+4)*7),
-                  // width: 200,
-                  child: LineChart(
-                      LineChartData(
-                          maxX: 5.5,
-                          minX: -0.5,
-                          minY: 0,
-                          maxY: 50,
-                          borderData: FlBorderData(show: false),
-                          titlesData: FlTitlesData(
-                              show: true,
-                              topTitles: AxisTitles(
-                                  sideTitles: SideTitles(showTitles: false)
-                              ),
-                              rightTitles: AxisTitles(
-                                  sideTitles: SideTitles(showTitles: false)
-                              ),
-                              leftTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                      showTitles: true,
-                                      reservedSize: 40,
-                                      getTitlesWidget: (value, meta) => Text("")
-                                  )
-                              ),
-                              bottomTitles: AxisTitles(
-                                  sideTitles: SideTitles(
-                                      showTitles: true,
-                                      reservedSize: 40,
-                                      getTitlesWidget: (value, meta) => Text("")
-                                  )
-                              )
-                          ),
-                          lineBarsData: [
-                            LineChartBarData(
-                                dotData: FlDotData(
-
-                                ),
-                                lineChartStepData: LineChartStepData(stepDirection: 1),
-                                spots: List.generate(values.length, (index){
-                                  return FlSpot(index.toDouble(),values[index].toDouble(),
-
-                                  );
-                                }).toList())],
-                          gridData: FlGridData(
-                            show: false,
-                          )
-                      )
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        // Container(
-        //   height: 300,
-        //   width: 400,
-        //   child: FLC.VerticalBarChart(
-        //       painter: FLC.VerticalBarChartPainter(
-        //           verticalBarChartContainer: FLC.VerticalBarChartTopContainer(
-        //               chartData: FLC.ChartData(
-        //                   dataRows: [valuesDouble],
-        //                   chartOptions: FLC.ChartOptions(
-        //
-        //                   ),
-        //                   dataRowsLegends: ["Teams"],
-        //                   xUserLabels: strVals
-        //               )
-        //           )
-        //       )
-        //   ),
-        // )
-        // charts.NumericComboChart(
-        //
-        //   defaultRenderer: charts.LineRendererConfig(),
-        // )
-      ],
-    ),
-  );
-}
-
 Widget getTitles(double value, TitleMeta meta) {
   const style = TextStyle(
     color: Colors.black,
     fontWeight: FontWeight.bold,
     fontSize: 10,
   );
+
   var val = value.toInt();
+
+  var maxWidthText = "MMM";
+  final Size txtSize = _textSize(maxWidthText, style);
+  String text = "";
+  if(txtSize.width * values.length < 350){
+    text = getTitle(val);
+  }
   return SideTitleWidget(
     axisSide: meta.axisSide,
     space: 8,
-    child: Text(getTitle(val), style: style),
+    child: Text(text, style: style),
   );
+}
+
+// Here it is!
+Size _textSize(String text, TextStyle style) {
+  final TextPainter textPainter = TextPainter(
+      text: TextSpan(text: text, style: style), maxLines: 1, textDirection: TextDirection.ltr)
+    ..layout(minWidth: 0, maxWidth: double.infinity);
+  return textPainter.size;
 }
 
 double get maxValue => values.reduce(max).toDouble();
